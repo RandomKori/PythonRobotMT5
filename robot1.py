@@ -1,5 +1,7 @@
 import MetaTrader5 as mt5
 import random as rnd
+import datetime
+from dateutil.relativedelta import relativedelta
 
 TP=300
 SL=300
@@ -10,6 +12,20 @@ symbol="EURUSD"
 
 def OnLot():
     l=Lot
+    from_date=datetime.datetime(2020,1,1)
+    to_date=datetime.datetime.today()+relativedelta(days=+1)
+    pos=None
+    pos=mt5.history_deals_get(from_date, to_date)
+    if pos!=None:
+        p=len(pos)
+        while(p>0):
+            p=p-1
+            ps=pos[p].type
+            print(pos[p])
+            if ps==0 or ps==1:
+                if pos[p].profit<0.0:
+                    l=pos[p].volume*2
+                break
     return l
 
 def OnTick():
